@@ -1,7 +1,7 @@
 from yowsup.stacks                             import YowStackBuilder
 from yowsup.common                             import YowConstants
 from yowsup.layers                             import YowLayerEvent
-from layer                                     import EchoLayer
+from layer                                     import SyncLayer
 from yowsup.layers.auth                        import YowAuthenticationProtocolLayer
 from yowsup.layers.coder                       import YowCoderLayer
 from yowsup.layers.network                     import YowNetworkLayer
@@ -20,7 +20,7 @@ if __name__==  "__main__":
 
     stack = stackBuilder\
         .pushDefaultLayers(True)\
-        .push(EchoLayer) \
+        .push(SyncLayer) \
         .build()
 
     stack.setProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS, CREDENTIALS)       #setting credentials
