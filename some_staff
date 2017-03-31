@@ -1,0 +1,76 @@
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+
+
+
+
+apt-get install python3-dateutil 
+apt-get install python3-setuptools 
+apt-get install python3-dev 
+apt-get install libevent-dev 
+apt-get install ncurses-dev
+
+https://raw.githubusercontent.com/rigid/transwhat/5063966772a7892261479a5e9af1541512eab4a3/yowsupwrapper.py
+
+class EchoLayer(YowInterfaceLayer):
+    @ProtocolEntityCallback("message")
+    def onMessage(self, message):     
+        if (message.isGroupMessage()):
+            print("(GROUP)[%s]-[%s]\t%s" % (message.getParticipant(), message.getFrom(), message.getBody()))
+        else:
+            print("(PVT)[%s]\t%s" % (message.getFrom(), message.getBody()))
+
+from Yowsup.connectionmanager import YowsupConnectionManager
+
+
+
+
+
+def waOnGroupMessageReceived(messageId, groupJid, author, messageContent, timestamp, wantsReceipt, pushName):
+print groupJid
+signalsInterface.registerListener("group_messageReceived", waOnGroupMessageReceived)
+
+version: 2.16.328
+lassesMd5: 1I2weuZmVg+uL50+HXeSJw==
+
+
+1naz8gL5pIYWbtaOZ3207g
+2.17.16
+
+2AlZIFKcwyI4D+Uwhi5oHg
+
+from yowsup.layers.protocol_presence.protocolentities import AvailablePresenceProtocolEntity
+
+def sendAvailable(self):
+    self.toLower(AvailablePresenceProtocolEntity())
+
+if (message.isGroupMessage()):
+            print("(GROUP)[%s]-[%s]\t%s" % (message.getParticipant(), message.getFrom(), message.getBody()))
+        else:
+            print("(PVT)[%s]\t%s" % (message.getFrom(), message.getBody()))
+
+
+self.toLower(messageProtocolEntity.ack())
+self.toLower(AvailablePresenceProtocolEntity())
+self.toLower(messageProtocolEntity.ack(True))
+self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_TYPING, Jid.normalize(messageProtocolEntity.getFrom(False)) ))
+self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_PAUSED, Jid.normalize(messageProtocolEntity.getFrom(False)) ))
+self.toLower(messageProtocolEntity.forward(messageProtocolEntity.getFrom()))
+self.toLower(UnavailablePresenceProtocolEntity())
+
+def getUsername(self, full = False):
+        if self._credentials:
+            return self._credentials[0] if not full else ("%s@%s" % (self._credentials[0], YowConstants.WHATSAPP_SERVER))
+        else:
+            #prop = self.getProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS)  #Original line
+            prop = self.getProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS)[0] if not full else ("%s@%s" % (
+                    self.getProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS)[0], YowConstants.WHATSAPP_SERVER))
+            #return prop[0] if prop else None  #Original line
+            return prop if prop else None
+
+
+
+
+messageProtocolEntity.timestamp
+
