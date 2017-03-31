@@ -1,0 +1,432 @@
+diff --git a/yowsup/common/http/warequest.py b/yowsup/common/http/warequest.py
+index c847be8..8bfbb51 100644
+--- a/yowsup/common/http/warequest.py
++++ b/yowsup/common/http/warequest.py
+@@ -1,7 +1,8 @@
+ import urllib,sys, os, logging
+ import hashlib
+ from .waresponseparser import ResponseParser
+-from yowsup.env import YowsupEnv
++from yowsup.env import AndroidYowsupEnv
++CURRENT_ENV = AndroidYowsupEnv()
+ 
+ if sys.version_info < (3, 0):
+     import httplib
+@@ -60,7 +61,7 @@ class WARequest(object):
+         self.params = []
+ 
+     def getUserAgent(self):
+-        return YowsupEnv.getCurrent().getUserAgent()
++        return AndroidYowsupEnv.getCurrent().getUserAgent()
+ 
+     def send(self, parser = None):
+ 
+diff --git a/yowsup/env/env.py b/yowsup/env/env.py
+old mode 100644
+new mode 100755
+index c03e800..46dcc4f
+--- a/yowsup/env/env.py
++++ b/yowsup/env/env.py
+@@ -1,98 +1,98 @@
+-import abc
+-import logging
+-from six import with_metaclass
+-
+-logger = logging.getLogger(__name__)
+-
+-DEFAULT = "s40"
+-
+-class YowsupEnvType(abc.ABCMeta):
+-    def __init__(cls, name, bases, dct):
+-        if name != "YowsupEnv":
+-            YowsupEnv.registerEnv(cls)
+-        super(YowsupEnvType, cls).__init__(name, bases, dct)
+-
+-class YowsupEnv(with_metaclass(YowsupEnvType, object)):
+-    __metaclass__ = YowsupEnvType
+-    __ENVS = {}
+-    __CURR = None
+-
+-    _USERAGENT_STRING = "WhatsApp/{WHATSAPP_VERSION} {OS_NAME}/{OS_VERSION} Device/{MANUFACTURER}-{DEVICE_NAME}"
+-
+-    @classmethod
+-    def registerEnv(cls, envCls):
+-        envName = envCls.__name__.lower().replace("yowsupenv", "")
+-        cls.__ENVS[envName] = envCls
+-        logger.debug("registered env %s => %s" % (envName, envCls))
+-
+-    @classmethod
+-    def setEnv(cls, envName):
+-        if not envName in cls.__ENVS:
+-            raise ValueError("%s env does not exist" % envName)
+-        logger.debug("Current env changed to %s " % envName)
+-        cls.__CURR = cls.__ENVS[envName]()
+-
+-    @classmethod
+-    def getEnv(cls, envName):
+-        if not envName in cls.__ENVS:
+-            raise ValueError("%s env does not exist" % envName)
+-
+-        return cls.__ENVS[envName]()
+-
+-    @classmethod
+-    def getRegisteredEnvs(cls):
+-        return list(cls.__ENVS.keys())
+-
+-    @classmethod
+-    def getCurrent(cls):
+-        if cls.__CURR is None:
+-            env = DEFAULT
+-            envs = cls.getRegisteredEnvs()
+-            if env not in envs:
+-                env = envs[0]
+-            logger.debug("Env not set, setting it to %s" % env)
+-            cls.setEnv(env)
+-        return cls.__CURR
+-
+-    @abc.abstractmethod
+-    def getToken(self, phoneNumber):
+-        pass
+-
+-    @abc.abstractmethod
+-    def getVersion(self):
+-        pass
+-
+-    @abc.abstractmethod
+-    def getOSVersion(self):
+-        pass
+-
+-    @abc.abstractmethod
+-    def getOSName(self):
+-        pass
+-
+-    @abc.abstractmethod
+-    def getDeviceName(self):
+-        pass
+-
+-    @abc.abstractmethod
+-    def getManufacturer(self):
+-        pass
+-
+-    @abc.abstractmethod
+-    def isAxolotlEnabled(self):
+-        pass
+-
+-    def getBuildVersion(self):
+-        return ""
+-
+-    def getResource(self):
+-        return self.getOSName() + "-" + self.getVersion()
+-
+-    def getUserAgent(self):
+-        return self.__class__._USERAGENT_STRING.format(
+-            WHATSAPP_VERSION = self.getVersion(),
+-            OS_NAME = self.getOSName(),
+-            OS_VERSION = self.getOSVersion(),
+-            MANUFACTURER = self.getManufacturer(),
+-            DEVICE_NAME = self.getDeviceName()
+-        )
++import abc
++import logging
++from six import with_metaclass
++
++logger = logging.getLogger(__name__)
++
++DEFAULT = "Android"
++
++class YowsupEnvType(abc.ABCMeta):
++    def __init__(cls, name, bases, dct):
++        if name != "YowsupEnv":
++            YowsupEnv.registerEnv(cls)
++        super(YowsupEnvType, cls).__init__(name, bases, dct)
++
++class YowsupEnv(with_metaclass(YowsupEnvType, object)):
++    __metaclass__ = YowsupEnvType
++    __ENVS = {}
++    __CURR = None
++
++    _USERAGENT_STRING = "WhatsApp/{WHATSAPP_VERSION} {OS_NAME}/{OS_VERSION} Device/{MANUFACTURER}-{DEVICE_NAME}"
++
++    @classmethod
++    def registerEnv(cls, envCls):
++        envName = envCls.__name__.lower().replace("yowsupenv", "")
++        cls.__ENVS[envName] = envCls
++        logger.debug("registered env %s => %s" % (envName, envCls))
++
++    @classmethod
++    def setEnv(cls, envName):
++        if not envName in cls.__ENVS:
++            raise ValueError("%s env does not exist" % envName)
++        logger.debug("Current env changed to %s " % envName)
++        cls.__CURR = cls.__ENVS[envName]()
++
++    @classmethod
++    def getEnv(cls, envName):
++        if not envName in cls.__ENVS:
++            raise ValueError("%s env does not exist" % envName)
++
++        return cls.__ENVS[envName]()
++
++    @classmethod
++    def getRegisteredEnvs(cls):
++        return list(cls.__ENVS.keys())
++
++    @classmethod
++    def getCurrent(cls):
++        if cls.__CURR is None:
++            env = DEFAULT
++            envs = cls.getRegisteredEnvs()
++            if env not in envs:
++                env = envs[0]
++            logger.debug("Env not set, setting it to %s" % env)
++            cls.setEnv(env)
++        return cls.__CURR
++
++    @abc.abstractmethod
++    def getToken(self, phoneNumber):
++        pass
++
++    @abc.abstractmethod
++    def getVersion(self):
++        pass
++
++    @abc.abstractmethod
++    def getOSVersion(self):
++        pass
++
++    @abc.abstractmethod
++    def getOSName(self):
++        pass
++
++    @abc.abstractmethod
++    def getDeviceName(self):
++        pass
++
++    @abc.abstractmethod
++    def getManufacturer(self):
++        pass
++
++    @abc.abstractmethod
++    def isAxolotlEnabled(self):
++        pass
++
++    def getBuildVersion(self):
++        return ""
++
++    def getResource(self):
++        return self.getOSName() + "-" + self.getVersion()
++
++    def getUserAgent(self):
++        return self.__class__._USERAGENT_STRING.format(
++            WHATSAPP_VERSION = self.getVersion(),
++            OS_NAME = self.getOSName(),
++            OS_VERSION = self.getOSVersion(),
++            MANUFACTURER = self.getManufacturer(),
++            DEVICE_NAME = self.getDeviceName()
++        )
+diff --git a/yowsup/env/env_android.py b/yowsup/env/env_android.py
+old mode 100644
+new mode 100755
+index 6771b58..9cfa4b6
+--- a/yowsup/env/env_android.py
++++ b/yowsup/env/env_android.py
+@@ -1,72 +1,72 @@
+-from .env import YowsupEnv
+-import base64
+-import hashlib
+-
+-
+-class AndroidYowsupEnv(YowsupEnv):
+-    _SIGNATURE = "MIIDMjCCAvCgAwIBAgIETCU2pDALBgcqhkjOOAQDBQAwfDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFDASBgNV" \
+-        "BAcTC1NhbnRhIENsYXJhMRYwFAYDVQQKEw1XaGF0c0FwcCBJbmMuMRQwEgYDVQQLEwtFbmdpbmVlcmluZzEUMBIGA1UEAxMLQnJ" \
+-        "pYW4gQWN0b24wHhcNMTAwNjI1MjMwNzE2WhcNNDQwMjE1MjMwNzE2WjB8MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5" \
+-        "pYTEUMBIGA1UEBxMLU2FudGEgQ2xhcmExFjAUBgNVBAoTDVdoYXRzQXBwIEluYy4xFDASBgNVBAsTC0VuZ2luZWVyaW5nMRQwEg" \
+-        "YDVQQDEwtCcmlhbiBBY3RvbjCCAbgwggEsBgcqhkjOOAQBMIIBHwKBgQD9f1OBHXUSKVLfSpwu7OTn9hG3UjzvRADDHj+AtlEm" \
+-        "aUVdQCJR+1k9jVj6v8X1ujD2y5tVbNeBO4AdNG/yZmC3a5lQpaSfn+gEexAiwk+7qdf+t8Yb+DtX58aophUPBPuD9tPFHsMCN" \
+-        "VQTWhaRMvZ1864rYdcq7/IiAxmd0UgBxwIVAJdgUI8VIwvMspK5gqLrhAvwWBz1AoGBAPfhoIXWmz3ey7yrXDa4V7l5lK+7+jr" \
+-        "qgvlXTAs9B4JnUVlXjrrUWU/mcQcQgYC0SRZxI+hMKBYTt88JMozIpuE8FnqLVHyNKOCjrh4rs6Z1kW6jfwv6ITVi8ftiegEkO" \
+-        "8yk8b6oUZCJqIPf4VrlnwaSi2ZegHtVJWQBTDv+z0kqA4GFAAKBgQDRGYtLgWh7zyRtQainJfCpiaUbzjJuhMgo4fVWZIvXHaS" \
+-        "HBU1t5w//S0lDK2hiqkj8KpMWGywVov9eZxZy37V26dEqr/c2m5qZ0E+ynSu7sqUD7kGx/zeIcGT0H+KAVgkGNQCo5Uc0koLRW" \
+-        "YHNtYoIvt5R3X6YZylbPftF/8ayWTALBgcqhkjOOAQDBQADLwAwLAIUAKYCp0d6z4QQdyN74JDfQ2WCyi8CFDUM4CaNB+ceVXd" \
+-        "KtOrNTQcc0e+t"
+-
+-    _MD5_CLASSES = "ry9Xz6kVioQctwA3G9z62Q=="
+-    _KEY = "eQV5aq/Cg63Gsq1sshN9T3gh+UUp0wIw0xgHYT1bnCjEqOJQKCRrWxdAe2yvsDeCJL+Y4G3PRD2HUF7oUgiGo8vGlNJOaux26k+A2F3hj8A="
+-
+-    _VERSION = "2.12.556"
+-    _OS_NAME = "Android"
+-    _OS_VERSION = "4.3"
+-    _DEVICE_NAME = "armani"
+-    _MANUFACTURER = "Xiaomi"
+-    _BUILD_VERSION = "JLS36C"
+-    _AXOLOTL = True
+-
+-    def getVersion(self):
+-        return self.__class__._VERSION
+-
+-    def getOSName(self):
+-        return self.__class__._OS_NAME
+-
+-    def getOSVersion(self):
+-        return self.__class__._OS_VERSION
+-
+-    def getDeviceName(self):
+-        return self.__class__._DEVICE_NAME
+-
+-    def getBuildVersion(self):
+-        return self.__class__._BUILD_VERSION
+-
+-    def getManufacturer(self):
+-        return self.__class__._MANUFACTURER
+-
+-    def isAxolotlEnabled(self):
+-        return self.__class__._AXOLOTL
+-
+-    def getToken(self, phoneNumber):
+-        keyDecoded = bytearray(base64.b64decode(self.__class__._KEY))
+-        sigDecoded = base64.b64decode(self.__class__._SIGNATURE)
+-        clsDecoded = base64.b64decode(self.__class__._MD5_CLASSES)
+-        data = sigDecoded + clsDecoded + phoneNumber.encode()
+-
+-        opad = bytearray()
+-        ipad = bytearray()
+-        for i in range(0, 64):
+-            opad.append(0x5C ^ keyDecoded[i])
+-            ipad.append(0x36 ^ keyDecoded[i])
+-        hash = hashlib.sha1()
+-        subHash = hashlib.sha1()
+-        try:
+-            subHash.update(ipad + data)
+-            hash.update(opad + subHash.digest())
+-        except TypeError:
+-            subHash.update(bytes(ipad + data))
+-            hash.update(bytes(opad + subHash.digest()))
+-        result = base64.b64encode(hash.digest())
+-        return result
++from .env import YowsupEnv
++import base64
++import hashlib
++
++
++class AndroidYowsupEnv(YowsupEnv):
++    _SIGNATURE = "MIIDMjCCAvCgAwIBAgIETCU2pDALBgcqhkjOOAQDBQAwfDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFDASBgNV" \
++        "BAcTC1NhbnRhIENsYXJhMRYwFAYDVQQKEw1XaGF0c0FwcCBJbmMuMRQwEgYDVQQLEwtFbmdpbmVlcmluZzEUMBIGA1UEAxMLQnJ" \
++        "pYW4gQWN0b24wHhcNMTAwNjI1MjMwNzE2WhcNNDQwMjE1MjMwNzE2WjB8MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5" \
++        "pYTEUMBIGA1UEBxMLU2FudGEgQ2xhcmExFjAUBgNVBAoTDVdoYXRzQXBwIEluYy4xFDASBgNVBAsTC0VuZ2luZWVyaW5nMRQwEg" \
++        "YDVQQDEwtCcmlhbiBBY3RvbjCCAbgwggEsBgcqhkjOOAQBMIIBHwKBgQD9f1OBHXUSKVLfSpwu7OTn9hG3UjzvRADDHj+AtlEm" \
++        "aUVdQCJR+1k9jVj6v8X1ujD2y5tVbNeBO4AdNG/yZmC3a5lQpaSfn+gEexAiwk+7qdf+t8Yb+DtX58aophUPBPuD9tPFHsMCN" \
++        "VQTWhaRMvZ1864rYdcq7/IiAxmd0UgBxwIVAJdgUI8VIwvMspK5gqLrhAvwWBz1AoGBAPfhoIXWmz3ey7yrXDa4V7l5lK+7+jr" \
++        "qgvlXTAs9B4JnUVlXjrrUWU/mcQcQgYC0SRZxI+hMKBYTt88JMozIpuE8FnqLVHyNKOCjrh4rs6Z1kW6jfwv6ITVi8ftiegEkO" \
++        "8yk8b6oUZCJqIPf4VrlnwaSi2ZegHtVJWQBTDv+z0kqA4GFAAKBgQDRGYtLgWh7zyRtQainJfCpiaUbzjJuhMgo4fVWZIvXHaS" \
++        "HBU1t5w//S0lDK2hiqkj8KpMWGywVov9eZxZy37V26dEqr/c2m5qZ0E+ynSu7sqUD7kGx/zeIcGT0H+KAVgkGNQCo5Uc0koLRW" \
++        "YHNtYoIvt5R3X6YZylbPftF/8ayWTALBgcqhkjOOAQDBQADLwAwLAIUAKYCp0d6z4QQdyN74JDfQ2WCyi8CFDUM4CaNB+ceVXd" \
++        "KtOrNTQcc0e+t"
++
++    _MD5_CLASSES = "2AlZIFKcwyI4D+Uwhi5oHg=="
++    _KEY = "eQV5aq/Cg63Gsq1sshN9T3gh+UUp0wIw0xgHYT1bnCjEqOJQKCRrWxdAe2yvsDeCJL+Y4G3PRD2HUF7oUgiGo8vGlNJOaux26k+A2F3hj8A="
++
++    _VERSION = "2.17.106"
++    _OS_NAME = "Android"
++    _OS_VERSION = "4.3"
++    _DEVICE_NAME = "armani"
++    _MANUFACTURER = "Xiaomi"
++    _BUILD_VERSION = "JLS36C"
++    _AXOLOTL = True
++
++    def getVersion(self):
++        return self.__class__._VERSION
++
++    def getOSName(self):
++        return self.__class__._OS_NAME
++
++    def getOSVersion(self):
++        return self.__class__._OS_VERSION
++
++    def getDeviceName(self):
++        return self.__class__._DEVICE_NAME
++
++    def getBuildVersion(self):
++        return self.__class__._BUILD_VERSION
++
++    def getManufacturer(self):
++        return self.__class__._MANUFACTURER
++
++    def isAxolotlEnabled(self):
++        return self.__class__._AXOLOTL
++
++    def getToken(self, phoneNumber):
++        keyDecoded = bytearray(base64.b64decode(self.__class__._KEY))
++        sigDecoded = base64.b64decode(self.__class__._SIGNATURE)
++        clsDecoded = base64.b64decode(self.__class__._MD5_CLASSES)
++        data = sigDecoded + clsDecoded + phoneNumber.encode()
++
++        opad = bytearray()
++        ipad = bytearray()
++        for i in range(0, 64):
++            opad.append(0x5C ^ keyDecoded[i])
++            ipad.append(0x36 ^ keyDecoded[i])
++        hash = hashlib.sha1()
++        subHash = hashlib.sha1()
++        try:
++            subHash.update(ipad + data)
++            hash.update(opad + subHash.digest())
++        except TypeError:
++            subHash.update(bytes(ipad + data))
++            hash.update(bytes(opad + subHash.digest()))
++        result = base64.b64encode(hash.digest())
++        return result
+diff --git a/yowsup/layers/auth/layer_authentication.py b/yowsup/layers/auth/layer_authentication.py
+index 90d6c69..461f944 100644
+--- a/yowsup/layers/auth/layer_authentication.py
++++ b/yowsup/layers/auth/layer_authentication.py
+@@ -49,8 +49,11 @@ class YowAuthenticationProtocolLayer(YowProtocolLayer):
+         if self._credentials:
+             return self._credentials[0] if not full else ("%s@%s" % (self._credentials[0], YowConstants.WHATSAPP_SERVER))
+         else:
+-            prop = self.getProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS)
+-            return prop[0] if prop else None
++            #prop = self.getProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS)  #Original line
++            prop = self.getProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS)[0] if not full else ("%s@%s" % (
++                    self.getProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS)[0], YowConstants.WHATSAPP_SERVER))
++            #return prop[0] if prop else None  #Original line
++            return prop if prop else None
+ 
+     @EventCallback(YowNetworkLayer.EVENT_STATE_CONNECTED)
+     def onConnected(self, yowLayerEvent):
+diff --git a/yowsup/layers/axolotl/layer_receive.py b/yowsup/layers/axolotl/layer_receive.py
+index 5ec3293..bf519a2 100644
+--- a/yowsup/layers/axolotl/layer_receive.py
++++ b/yowsup/layers/axolotl/layer_receive.py
+@@ -249,7 +249,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
+         messageNode["type"] = "media"
+         mediaNode = ProtocolTreeNode("media", {
+             "latitude": locationMessage.degrees_latitude,
+-            "longitude": locationMessage.degress_longitude,
++            "longitude": locationMessage.degrees_longitude,
+             "name": "%s %s" % (locationMessage.name, locationMessage.address),
+             "url": locationMessage.url,
+             "encoding": "raw",
+diff --git a/yowsup/registration/coderequest.py b/yowsup/registration/coderequest.py
+index d0c5d91..9aa18f9 100644
+--- a/yowsup/registration/coderequest.py
++++ b/yowsup/registration/coderequest.py
+@@ -2,8 +2,9 @@ from yowsup.common.http.warequest import WARequest
+ from yowsup.common.http.waresponseparser import JSONResponseParser
+ from yowsup.common.tools import StorageTools, WATools
+ from yowsup.registration.existsrequest import WAExistsRequest
+-from yowsup.env import YowsupEnv
++from yowsup.env import AndroidYowsupEnv
+ import random, hashlib, os
++CURRENT_ENV = AndroidYowsupEnv()
+ 
+ class WACodeRequest(WARequest):
+ 
+@@ -38,7 +39,7 @@ class WACodeRequest(WARequest):
+         self.addParam("extexist", "1")
+         self.addParam("extstate", "1")
+ 
+-        self.addParam("token", YowsupEnv.getCurrent().getToken(p_in))
++        self.addParam("token", AndroidYowsupEnv.getCurrent().getToken(p_in))
+ 
+         self.url = "v.whatsapp.net/v2/code"
+ 
