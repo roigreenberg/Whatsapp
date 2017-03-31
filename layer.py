@@ -7,10 +7,10 @@ from yowsup.layers.protocol_presence.protocolentities  import AvailablePresenceP
 import time
 from random import randrange
 
-class EchoLayer(YowInterfaceLayer):
+class SyncLayer(YowInterfaceLayer):
 
     def __init__(self):
-        super(EchoLayer, self).__init__()
+        super(SyncLayer, self).__init__()
         file = open("group1", "r")
         value = file.readlines()
         if value[1] != "":
