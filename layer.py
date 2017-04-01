@@ -76,15 +76,19 @@ class SyncLayer(YowInterfaceLayer):
         time.sleep(randrange(3, 7) * 0.1)
         self.toLower(messageProtocolEntity.ack(True))  # set read (blue)
         time.sleep(randrange(3, 7) * 0.1)
-        if self.sent_to[0] != "":
-            self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_TYPING,
-                                                         Jid.normalize(self.sent_to[1])))  # set in writing
-            time.sleep(randrange(15, 25) * 0.1)
-            self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_PAUSED,
-                                                         Jid.normalize(self.sent_to[1])))  # set no is writing
-            time.sleep(randrange(7, 13) * 0.1)
-            self.toLower(messageProtocolEntity.forward(self.sent_to[0]))  # send message
-            time.sleep(randrange(25, 35) * 0.1)
+
+        try:
+            if self.sent_to[0] != "":
+                self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_TYPING,
+                                                             Jid.normalize(self.sent_to[1])))  # set in writing
+                time.sleep(randrange(15, 25) * 0.1)
+                self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_PAUSED,
+                                                             Jid.normalize(self.sent_to[1])))  # set no is writing
+                time.sleep(randrange(7, 13) * 0.1)
+                self.toLower(messageProtocolEntity.forward(self.sent_to[0]))  # send message
+                time.sleep(randrange(25, 35) * 0.1)
+        except:
+            print("Catch an error while sending a message from " + messageProtocolEntity.getFrom() + " to " + self.sent_to[0])
         self.toLower(UnavailablePresenceProtocolEntity())  # set offline
 
         self.sent_to[0] = ""
