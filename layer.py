@@ -61,7 +61,6 @@ class SyncLayer(YowInterfaceLayer):
                     elif "reset group" in messageProtocolEntity.getBody() \
                             and messageProtocolEntity.getFrom() in self.admin:
                         self.resetGroups()
-
             else:
                 print("Ignoring old message")
                 self.sent_to[0] = ""
@@ -77,7 +76,7 @@ class SyncLayer(YowInterfaceLayer):
         time.sleep(randrange(3, 7) * 0.1)
         self.toLower(messageProtocolEntity.ack(True))  # set read (blue)
         time.sleep(randrange(3, 7) * 0.1)
-        if self.sent_to:
+        if self.sent_to[0] != "":
             self.toLower(OutgoingChatstateProtocolEntity(OutgoingChatstateProtocolEntity.STATE_TYPING,
                                                          Jid.normalize(self.sent_to[1])))  # set in writing
             time.sleep(randrange(15, 25) * 0.1)
@@ -127,18 +126,18 @@ class SyncLayer(YowInterfaceLayer):
             value = file.readlines()
             if value[0] != "":
                 print("set group " + str(groupNum))
-                self.group[groupNum][0] = value[0]
-                self.group[groupNum][1] = value[1]
+                self.group[groupNum - 1][0] = value[0]
+                self.group[groupNum - 1][1] = value[1]
             file.close()
             return 1
         return 0
 
     def setGroupName(self, groupNum, messageProtocolEntity):
         print("set group " + str(groupNum))
-        self.group[groupNum][0] = messageProtocolEntity.getFrom()
-        self.group[groupNum][1] = messageProtocolEntity.getFrom(False)
+        self.group[groupNum - 1][0] = messageProtocolEntity.getFrom()
+        self.group[groupNum - 1][1] = messageProtocolEntity.getFrom(False)
         file = open("group" + str(groupNum), "w")
-        file.write(self.group[groupNum][0] + "\n" + self.group[groupNum][1])
+        file.write(self.group[groupNum - 1][0] + "\n" + self.group[groupNum - 1][1])
         file.close()
 
     def initAdmin(self):
