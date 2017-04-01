@@ -46,12 +46,16 @@ class SyncLayer(YowInterfaceLayer):
                         if self.isGroupSet[1] == 0:
                             print("need to set group 2")
                     else:
-                        if messageProtocolEntity.getFrom() == self.group[0][0]:
-                            self.sent_to = self.group[1]
+                        if messageProtocolEntity.getFrom() in self.group[0][0]:
+                            print("should send to group 2")
+                            self.sent_to = self.group[1][:]
                             # self.sent_to_false = self.group2f
-                        elif messageProtocolEntity.getFrom() == self.group[1][0]:
-                            self.sent_to = self.group[0]
+                        elif messageProtocolEntity.getFrom() in self.group[1][0]:
+                            print("should send to group 1")
+                            self.sent_to = self.group[0][:]
                             # self.sent_to_false = self.group1f
+                        else:
+                            print("Ignoring message from unknown group: " + messageProtocolEntity.getFrom() + " should be " + self.group[0][0] + " or " + self.group[1][0])
                 else:
                     if "live" in messageProtocolEntity.getBody() or "חיים" in messageProtocolEntity.getBody():
                         self.sent_to[0] = messageProtocolEntity.getFrom()
@@ -125,9 +129,9 @@ class SyncLayer(YowInterfaceLayer):
             file = open("group" + str(groupNum), "r")
             value = file.readlines()
             if value[0] != "":
-                print("set group " + str(groupNum))
-                self.group[groupNum - 1][0] = value[0]
-                self.group[groupNum - 1][1] = value[1]
+                self.group[groupNum - 1][0] = value[0].rstrip('\n')
+                self.group[groupNum - 1][1] = value[1].rstrip('\n')
+                print("init group " + str(groupNum) + ": " + self.group[groupNum - 1][0])
             file.close()
             return 1
         return 0
