@@ -1,0 +1,54 @@
+Traceback (most recent call last):
+  File "run.py", line 33, in <module>
+    stack.loop( timeout = 0.5, discrete = 0.5 )
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/stacks/yowstack.py", line 188, in loop
+    asyncore.loop(*args, **kwargs)
+  File "/usr/lib/python3.5/asyncore.py", line 203, in loop
+    poll_fun(timeout, map)
+  File "/usr/lib/python3.5/asyncore.py", line 150, in poll
+    read(obj)
+  File "/usr/lib/python3.5/asyncore.py", line 87, in read
+    obj.handle_error()
+  File "/usr/lib/python3.5/asyncore.py", line 83, in read
+    obj.handle_read_event()
+  File "/usr/lib/python3.5/asyncore.py", line 423, in handle_read_event
+    self.handle_read()
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/network/layer.py", line 102, in handle_read
+    self.receive(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/network/layer.py", line 110, in receive
+    self.toUpper(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/__init__.py", line 79, in toUpper
+    self.__upper.receive(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/stanzaregulator/layer.py", line 29, in receive
+    self.processReceived()
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/stanzaregulator/layer.py", line 49, in processReceived
+    self.toUpper(oneMessageData)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/__init__.py", line 79, in toUpper
+    self.__upper.receive(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/auth/layer_crypt.py", line 65, in receive
+    self.toUpper(payload)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/__init__.py", line 79, in toUpper
+    self.__upper.receive(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/coder/layer.py", line 35, in receive
+    self.toUpper(node)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/__init__.py", line 79, in toUpper
+    self.__upper.receive(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/logger/layer.py", line 14, in receive
+    self.toUpper(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/__init__.py", line 79, in toUpper
+    self.__upper.receive(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/axolotl/layer_control.py", line 44, in receive
+    self.toUpper(protocolTreeNode)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/__init__.py", line 79, in toUpper
+    self.__upper.receive(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/__init__.py", line 194, in receive
+    s.receive(data)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/axolotl/layer_send.py", line 64, in receive
+    if not self.processIqRegistry(protocolTreeNode):
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/__init__.py", line 161, in processIqRegistry
+    successClbk(protocolTreeNode, originalIq)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/axolotl/layer_base.py", line 51, in onSuccess
+    entity = ResultGetKeysIqProtocolEntity.fromProtocolTreeNode(resultNode)
+  File "/usr/local/lib/python3.5/dist-packages/yowsup2-2.5.2-py3.5.egg/yowsup/layers/axolotl/protocolentities/iq_keys_get_result.py", line 88, in fromProtocolTreeNode
+    preKeyId = ResultGetKeysIqProtocolEntity._bytesToInt(preKeyNode.getChild("id").getData())
+AttributeError: 'NoneType' object has no attribute 'getChild'
